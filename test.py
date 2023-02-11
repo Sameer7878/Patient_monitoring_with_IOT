@@ -1,15 +1,35 @@
 import time
-import max30100
+import Rasp_Sensor_Codes as rc
+from multiprocessing import Process
 
-mx30 = max30100.MAX30100()
+def runInParallel(*fns):
+  proc = []
+  for fn in fns:
+    p = Process(target=fn)
+    p.start()
+    proc.append(p)
+  for p in proc:
+    p.join()
+
+
+mx30 = rc.MAX30100()
 mx30.enable_spo2()
-import time
-import board
-import adafruit_adxl34x
-import busio
+#mx30.get_values()
+flame=rc.Fire_detect(18,24)
+acc=rc.Accelerometer()
+#acc.detect()
+oxy_pres=rc.Oxygen_Pressure(0x48)
+#spo2.get_values()
+#process_spo2=Process(target=mx30.get_values)
+#process_flame=Process(target=flame.detect)
+#process_acc=Process(target=acc.detect)
+#process_oxy_pres=Process(target=oxy_pres)
+while True:
+    runInParallel(mx30.get_values(),flame.detect,acc.detect,oxy_pres.get_values)
+
 #i2c=busio.I2C(board.SCL,board.SDA)
 #accelerometer = adafruit_adxl34x.ADXL345(i2c,address=0x57)
-while True:
+'''while True:
     #print("%f %f %f"%accelerometer.acceleration)
     time.sleep(0.5)
     mx30.read_sensor()
@@ -23,5 +43,7 @@ while True:
         print("Pulse:",hb);
     if mx30.red != mx30.buffer_red:
         print("SPO2:",spo2);
-
-    time.sleep(2)
+    
+    else:
+        print('Reading')
+    time.sleep(2)'''
