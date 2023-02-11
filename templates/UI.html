@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <title>Unify</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">-->
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+<div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Select Chat Mode</h2>
+        </div>
+        <div class="modal-body">
+            <div class="msg-coninfo" id="msg-coninfo">
+
+            </div>
+            <div class="chat-friend-btn" id="chatfrnd-input">
+                <div class="back-btn" id="back-btn">Back</div><br>
+                <input type="number" id="id1-input" placeholder="Your ID" readonly/><br>
+                <input type="number" id="id2-input" placeholder="Enter friend ID"/><br>
+                <button id="conn1" onclick="Est();">Connect</button>
+            </div>
+            <div class="btn-options" id="btn-options">
+                <button id="chat-friend">Chat With Friend</button><br><br>
+                <button id="chat-random">Chat Random</button>
+            </div>
+        </div>
+        <!--<div class="modal-footer">
+          <h3>Modal Footer</h3>
+        </div>-->
+    </div>
+
+</div>
+<section class="msger">
+    <header class="msger-header">
+        <div class="msger-header-title">
+            <i class="fas fa-comment-alt"></i> Unify
+        </div>
+        <div class="msger-header-options">
+            <span><i class="fas fa-cog">Online Connections:<span id="countnum"></span></i></span>
+        </div>
+    </header>
+
+    <main class="msger-chat">
+
+
+
+    </main>
+
+    <form class="msger-inputarea">
+
+        <input type="text" class="msger-input" placeholder="Enter your message..."/>
+
+
+        <button type="submit" class="msger-send-btn" id="sumbit">Send</button>
+    </form>
+    <script type="text/javascript" src="../static/main.js"></script>
+</section>
+</body>
+</html>

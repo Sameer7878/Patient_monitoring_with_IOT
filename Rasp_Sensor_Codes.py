@@ -28,6 +28,7 @@ import adafruit_adxl34x
 import busio
 import Adafruit_ADS1x15
 import time
+from multiprocessing import Queue
 
 INT_STATUS   = 0x00  # Which interrupts are tripped
 INT_ENABLE   = 0x01  # Which interrupts are active
@@ -113,7 +114,7 @@ class MAX30100(object):
                  led_current_red=11.0,
                  led_current_ir=11.0,
                  pulse_width=1600,
-                 max_buffer_len=10000
+                 max_buffer_len=10000,
                  ):
 
         # Default to the standard I2C bus on Pi.
@@ -221,7 +222,9 @@ class MAX30100(object):
         self.read_sensor()
         self.hb=int(self.ir/100)
         self.spo2=int(self.red/100)
-        print(self.hb,self.spo2)
+        #await websocket.send_json({"module_name":"max30100","pulse":self.hb,"spo2":self.spo2, "state":"Running"})
+        #print(1)
+        return {"module_name":"max30100","pulse":self.hb,"spo2":self.spo2, "state":"Running"}
         
 
 
@@ -237,7 +240,9 @@ class Accelerometer:
     def detect(self):
         x, y, z = self.acc.acceleration
         if x>=1.00 or y>=1.00:
-            print('Motion Detected')
+            #await websocket.send_json({"module_name":"Accelerometer","X":x,"Y":y,"Z":z,"status":"True" ,"state":"Motion Detected"})
+            return {"module_name":"Accelerometer","X":x,"Y":y,"Z":z,"status":"True", "state":"Motion Detected"}
+        return {"status":False}
 
 #Class for Flame_Sensor
             
@@ -255,11 +260,14 @@ class Fire_detect:
 
         # Check if the flame sensor has detected a flame
         if flame_detected:
-            print("Flame detected!")
             GPIO.output(self.BUZZ_PIN,GPIO.HIGH)
+            #await websocket.send_json({"module_name":"flame_detector","status":"True" ,"state":"Fire Detected","Buzzer":"activated for 2 seconds"})
+            #print(3)
+            return {"module_name":"flame_detector","status":"True" ,"state":"Fire Detected","Buzzer":"activated for 2 seconds"}
             time.sleep(2)
         else:
             GPIO.output(self.BUZZ_PIN,GPIO.LOW)
+            return {"status":False}
             # Wait for a short time before checking again
 #Class for measure the oxygen levels in cylinder
 class Oxygen_Pressure:
@@ -274,7 +282,10 @@ class Oxygen_Pressure:
         volts = value[0] / 32767.0 * 6.144
         psi = 50.0 * volts-25.0
         bar = psi * 0.0689475729
-        print("{0:.1f}".format(bar))
-
-        
-                    
+        if bar>0.1:
+            state="active"
+        else:
+            state="Idle"
+        #await websocket.send_json({"module_name":"oxygen_pressure","volts":volts,"psi":psi,"bar":bar, "state":state})
+        return {"module_name":"oxygen_pressure","volts":volts,"psi":psi,"bar":bar, "state":state}
+          

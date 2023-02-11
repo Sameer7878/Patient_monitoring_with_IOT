@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Chat</title>
+    </head>
+    <body>
+        <h1>WebSocket Chat</h1>
+        <h2>Your ID: <span id="ws1-id"></span></h2>
+        <h2>Friend ID: <span id="ws2-id"></span></h2>
+        <label for="id2-input"></label><input type="text" id="id2-input" placeholder="Enter friend ID"/>
+        <button id="conn1" onclick="Est();">Connect</button>
+        <form action="" onsubmit="sendMessage(event)">
+            <label for="messageText"></label><input type="text" id="messageText" autocomplete="off"/>
+            <button>Send</button>
+        </form>
+        <ul id='messages'>
+        </ul>
+
+    </body>
+</html>

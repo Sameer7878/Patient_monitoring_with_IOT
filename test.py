@@ -1,6 +1,6 @@
 import time
 import Rasp_Sensor_Codes as rc
-from multiprocessing import Process
+from multiprocessing import Process ,Queue
 
 def runInParallel(*fns):
   proc = []
@@ -10,7 +10,6 @@ def runInParallel(*fns):
     proc.append(p)
   for p in proc:
     p.join()
-
 
 mx30 = rc.MAX30100()
 mx30.enable_spo2()
@@ -25,7 +24,8 @@ oxy_pres=rc.Oxygen_Pressure(0x48)
 #process_acc=Process(target=acc.detect)
 #process_oxy_pres=Process(target=oxy_pres)
 while True:
-    runInParallel(mx30.get_values(),flame.detect,acc.detect,oxy_pres.get_values)
+    output_que=Queue()
+    runInParallel(mx30.get_values(output_que),flame.detect(output_que),acc.detect(output_que),oxy_pres.get_values(output_que))
 
 #i2c=busio.I2C(board.SCL,board.SDA)
 #accelerometer = adafruit_adxl34x.ADXL345(i2c,address=0x57)
