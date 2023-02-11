@@ -1,4 +1,4 @@
-from hx711 import HX711
+from dummy.hx711 import HX711
 print(1)
 try:
     hx711 = HX711(dout_pin=27,pd_sck_pin=17,channel='A',gain=64)

@@ -13,10 +13,8 @@ def runInParallel(*fns):
 
 mx30 = rc.MAX30100()
 mx30.enable_spo2()
-#mx30.get_values()
 flame=rc.Fire_detect(18,24)
 acc=rc.Accelerometer()
-#acc.detect()
 oxy_pres=rc.Oxygen_Pressure(0x48)
 #spo2.get_values()
 #process_spo2=Process(target=mx30.get_values)

@@ -69,7 +69,18 @@ html = """
 async def get():
     return HTMLResponse(html)
 
-#)
+@app.get("/GetCurrentOxygenPressure/")
+def get_oxy_pres():
+    return oxy_pres.get_values()
+@app.get("/GetPulseSpo2/")
+def get_pul_spo2():
+    return mx30.get_values()
+@app.get("/GetAcceleromterStatus/")
+def get_motion():
+    return acc.detect()
+@app.get("/GetFlameAlert/")
+def get_flame_det():
+    return flame.detect()
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
