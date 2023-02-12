@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Register | VitalSurveillance</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+<!--===============================================================================================-->
+
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+</head>
+<body>
+	
+	<div class="limiter">
+		<div class="container-login100">
+			<img src="../../static/assets/img/logo%20blue%20bg.PNG?raw=true" class="logo" alt="logo-blue-bg" border="0" style="width: 10%;
+    height: auto;">
+			<div class="wrap-login100">
+			
+				<div class="loader">
+					<div class="load_circle"></div>
+					<div class="load_circle"></div>
+					<div class="load_circle"></div>
+				</div>
+				
+				<form class="login100-form validate-form">
+					<span class="login100-form-title p-b-50">
+						Register Patient
+					</span>
+				<div class="line">
+									<div class="wrap-input100 validate-input">
+										<input class="input100" type="text" name="name" id="name">
+										<span class="focus-input100" data-placeholder="Full Name"></span>
+									</div>
+									<div class="wrap-input100 validate-input">
+										<input class="input100" type="text" name="patient_id" id="patient_id">
+										<span class="focus-input100" data-placeholder="Patient ID"></span>
+									</div>
+									
+				</div>
+					<div class="line">
+								<div class="wrap-input100 validate-input">
+									<input class="input100" type="number" name="bed_no" id="bed_no">
+									<span class="focus-input100" data-placeholder="Bed Number"></span>
+								</div>
+								<div class="wrap-input100 validate-input">
+									<input class="input100" type="date" name="joindate" id="joindate" >
+									<span class="focus-input100" data-placeholder="Joining Date"></span>
+								</div>
+				</div>
+				<div class="line">
+								<div class="wrap-input100 validate-input">
+									<input class="input100" type="number" name="phone" id="phone">
+									<span class="focus-input100" data-placeholder="Phone"></span>
+								</div>
+								<div class="wrap-input100 validate-input">
+									<input class="input100" type="email" name="email" id="email">
+									<span class="focus-input100" data-placeholder="Email"></span>
+								</div>
+				</div>
+
+				<div class="line">
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="text" name="address" id="address">
+						<span class="focus-input100" data-placeholder="Address"></span>
+					</div>
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="date" name="birthdate" id="birthdate">
+						<span class="focus-input100" data-placeholder="Date Of Birth"></span>
+					</div>
+					
+				</div>
+
+				<div class="line">
+					<div class="wrap-input100 validate-input">
+						<input class="input100" type="text" name="BGroup" id="BGr">
+						<span class="focus-input100" data-placeholder="Blood Group"></span>
+					</div>
+					<div class="wrap-input100 validate-input">
+						<input class="input100 has-val" type="text" list="gender" id="sex">
+							<datalist name="Sex" id="gender">
+							      	<option value="Male"></option>
+								<option value="Female"></option>
+								<option value="Prefer not to say"></option>
+							</datalist>
+						<span class="focus-input100" data-placeholder="Sex"></span>
+					</div>
+					
+				</div>
+				
+				</form>
+
+				<div class="form-col">
+					<div class="container-login100-form-btn">
+						<span class="alert-v" field-validate="Please fill-in all Fields" passfield-validate="Passwords do not match!" safepass-validate="Use Stronger Password -Within range of (A-Z, a-z, 1-9)" userexist="Username already exists. Try another."></span>
+						<div class="wrap-login100-form-btn">
+							<div class="login100-form-bgbtn"></div>
+							<button class="login100-form-btn">
+								Register
+							</button>
+						</div>
+					</div>
+				</div>	
+
+			</div>
+		</div>
+	</div>
+	
+<!--===============================================================================================-->
+	<script src="js/main.js"></script>
+
+</body>
+</html>

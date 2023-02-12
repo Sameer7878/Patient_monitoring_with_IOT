@@ -6,5 +6,11 @@
     </content>
     <orderEntry type="jdk" jdkName="Python 3.10 (Patient_Monitoring)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="paho-mqtt" level="application" />
+    <orderEntry type="library" name="toastui-calendar" level="application" />
+    <orderEntry type="library" name="boxicons" level="application" />
+    <orderEntry type="library" name="plotly-latest" level="application" />
+    <orderEntry type="library" name="medicatemplate.webflow.d2ac5975f" level="application" />
+    <orderEntry type="library" name="api:client" level="application" />
   </component>
 </module>

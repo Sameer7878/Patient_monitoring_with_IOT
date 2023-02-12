@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    function preLoaderHandler(){
+      $('.pre_loader').hide();
+    }
+  </script>
+  <script src="js/login.js"></script> 
+  <script src="js/device.js"></script>
+  
+  <title>Dashboard | HealthConnect</title>
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/device-list.css">
+  <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
+  <!-- Boxicons CDN Link -->
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+  
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>		
+
+  
+</head>
+
+<body>
+  <div class ="pre_loader">
+
+  </div>
+
+  <div class="node-dev pop-up" style="display: none!important;">
+
+   <div class="key-setting box" style="">
+    <div class="close">
+      <span class="dev-head">HealthConnect Devices</span>
+      <span class="close-icon" onclick="close_key()">✖</span>  
+    </div>
+    <div class="box-content">
+      <h2>Secret Key</h2>
+      <div class="value">
+        <code class="key-value">( Refresh Page )</code>
+        <span class="copy" onclick="copyToClipboard('.key-value')">📋</span>
+      </div>
+
+     
+      <div class="submit-key">
+          <input placeholder="Password" class="key-pass" type="password">
+          <button class="new_key" onclick="gen_newkey()">Generate New Key</button>
+          <span> Please reset your secret key regularly</span>
+      </div>
+      
+    </div>
+
+ </div>
+
+ <div class="dev-create box" style="">
+    
+  <div class="close">
+    <span class="dev-head">HealthConnect Devices</span><span class="close-icon" onclick="close_key()">✖</span>
+  </div>
+
+  <div class="box-content">
+    <div class="device-drop">
+      <div class="device-type">
+        <h2>Device Type</h2>
+                <label for="lang"></label>
+                  <select required="" type="text" name="dev-category" class="field-style field-split align-left" placeholder="Dev Category" id="dev-category" style="font-size: 15px;">
+                    <option value="" disabled="" selected="">Category</option>
+                    <option value="Central">Central</option>
+                    <option value="Temperature">Temperature</option>
+                    <option value="HeartBeat">HeartBeat</option><option value="Pulse">Pulse</option>
+                    <option value="Respiration">Respiration</option>
+                  </select>
+      </div>
+      <div class="hardware">
+          <h2>Hardware</h2>
+                <label for="lang"></label>
+                  <select required="" type="text" name="hw-category" class="field-style field-split align-left" placeholder="Hardware Category" id="hw-category" style="font-size: 15px;">
+                    <option value="" disabled="" selected="">Category</option>
+                    <option value="ESP32">ESP32 Dev Board</option>
+                    <option value="ESP8266">ESP8266 NodeMCU</option>
+                    <option value="android">Android App</option>
+                    <option value="cli">Terminal</option>
+                  </select>
+      </div>
+      </div>
+    <div class="device-checkb">
+      <h2>Medical Components</h2>
+        <div class="med-comp">
+        <div class="med-comp-c">
+          <label>All <input type="checkbox" value="all" name="comp" onclick="disable_rest()"></label>
+          <label>Temperature <input type="checkbox" value="temp" name="comp"></label>
+          <label>Systolic Blood Pressure <input type="checkbox" value="sbp" name="comp"></label>
+        </div>
+        <div class="med-comp-c">
+          <label>Diabolic Blood Pressure <input type="checkbox" value="dbp" name="comp"></label>
+          <label>Oxygen Saturation <input type="checkbox" value="spo2" name="comp"></label>
+          <label>Inspired Oxygen <input type="checkbox" value="fio2" name="comp"></label>
+        </div>
+      </div>
+    </div>
+  <div class="submit-key">
+    <button class="new_node" onclick="create_node()">Create New Device</button>
+  
+  <span>Click <a href="#">here</a> for Documentation on <b>How to Send Data</b></span></div>
+
+</div>
+  
+</div>
+
+</div>
+   
+  <div class="container" id="blur">
+    <div class="sidebar">
+      <div class="logo-details">
+        <img src="../../../static/assets/img/beat.PNG?raw=true" class="logo" alt="logo-blue-bg" border="0" style="width: 40px;height: 30px;margin-left: 10px;">
+        <span class="logo_name">Connect</span>
+      </div>
+      <ul class="nav-links">
+        <li class="dash content active">
+          <i class="bx bx-grid-alt"></i>
+          <span class="links_name">Dashboard</span>
+        </li>
+        <li class="diagnosis content">
+            <i class="bx bx-line-chart"></i>
+            <span class="links_name">Patients</span>
+        </li>
+
+        <li class="device content">
+            <i class="bx bx-line-chart"></i>
+            <span class="links_name">Diagnosis</span>
+        </li>
+        <li class="treatment content">
+            <i class="bx bxs-check-circle"></i>
+            <span class="links_name">Check Sensors</span>
+        </li>
+        <li class="schedule content">
+            <i class="bx bx-add-to-queue"></i>
+            <span class="links_name">Add/Remove</span>
+        </li>
+        <li class="log_out">
+		<i class="bx bx-log-out"></i>
+		<span class="links_name">Log out</span>
+        </li>
+      </ul>
+    </div>
+    <section class="home-section">
+      <nav>
+        <div class="sidebar-button">
+          <i class='bx bx-menu sidebarBtn'></i>
+          <span class="dashboard">Dashboard</span>
+        </div>
+        <div class="search-box">
+          <input type="text" placeholder="Search...">
+          <i class='bx bx-search'></i>
+        </div>
+       <!-- <div class="profile-details">
+         <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="DP"> 
+          <span class="admin_name username"></span>
+          <i class='bx bx-chevron-up'></i>
+
+          <div class="section-dropdown"> 
+ 
+                <a class="sd-list" href="../account/">Account</a>
+                <a class="sd-list" href="../documentation/">Documentation</a>
+                <a class="sd-list" href="../premium/">Premium</a>
+                <a class="sd-list" href="../preference/">Preference</a>
+      
+          </div>
+
+        </div>-->
+      </nav>
+      <div class="box-content dashboard active">
+        <div class="overview-boxes" style="
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: stretch;
+">
+          <div class="box">
+            <div class="right-side">
+              <div class="box-topic">Total Check Ups</div>
+              <div class="number">36</div>
+              <div class="indicator">
+                <i class="bx bx-up-arrow-alt"></i>
+                <span class="text">For Today</span>
+              </div>
+            </div>
+            <i class="fas fa-calendar cart" aria-hidden="true"></i>
+          </div>
+          <div class="box">
+            <div class="right-side">
+              <div class="box-topic">Total Patients</div>
+              <div class="number">23</div>
+              <div class="indicator">
+                <i class="bx bx-up-arrow-alt"></i>
+                <span class="text">Upto Today</span>
+              </div>
+            </div>
+            <i class="fas fa-person cart two" aria-hidden="true"></i>
+          </div>
+          <div class="box">
+            <div class="right-side">
+              <div class="box-topic">Total Staff</div>
+              <div class="number">10</div>
+              <div class="indicator">
+                <i class="bx bx-right-arrow-alt"></i>
+                <span class="text">Unassigned 5</span>
+              </div>
+            </div>
+            <i class="fas fa-user-tie cart three" aria-hidden="true"></i>
+          </div>
+          <div class="box">
+            <div class="right-side">
+              <div class="box-topic">Active Beds</div>
+              <div class="number">10</div>
+              <div class="indicator">
+                <i class="bx bx-up-arrow-alt"></i>
+                <span class="text">Upto Now</span>
+              </div>
+            </div>
+            <i class="fas fa-bed cart four" aria-hidden="true"></i>
+          </div>
+        </div>
+
+        <div class="sales-boxes">
+          <div class="recent-sales">
+            <div class="sales-details box">
+              <ul class="details">
+                <li class="topic">Patients</li>
+                <li><a href="#">Alex Doe</a></li>
+                <li><a href="#">David Mart</a></li>
+                <li><a href="#">Roe Parter</a></li>
+                <li><a href="#">Diana Penty</a></li>
+                <li><a href="#">Diana Penty</a></li>
+                <li><a href="#">Martin Paw</a></li>
+                <li><a href="#">Doe Alex</a></li>
+                <li><a href="#">Aiana Lexa</a></li>
+                <li><a href="#">Rexel Mags</a></li>
+              </ul>
+              <ul class="details">
+                <li class="topic">Age</li>
+                <li><a href="#">34</a></li>
+                <li><a href="#">24</a></li>
+                <li><a href="#">64</a></li>
+                <li><a href="#">54</a></li>
+                <li><a href="#">23</a></li>
+                <li><a href="#">54</a></li>
+                <li><a href="#">13</a></li>
+                <li><a href="#">25</a></li>
+                <li><a href="#">26</a></li>
+              </ul>
+              <ul class="details">
+                <li class="topic">Gender</li>
+                <li><a href="#">Male</a></li>
+                <li><a href="#">Male</a></li>
+                <li><a href="#">Male</a></li>
+                <li><a href="#">Female</a></li>
+                <li><a href="#">Female</a></li>
+                <li><a href="#">Male</a></li>
+                <li><a href="#">Male</a></li>
+                <li><a href="#">Female</a></li>
+                <li><a href="#">Male</a></li>
+              </ul>
+              <ul class="details">
+                <li class="topic">Monitoring Status</li>
+                <li><a href="#" style="color:green;font-weight: bold">Active</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">Active</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">Active</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">Active</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">Active</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">Active</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">Active</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">Active</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">Active</a></li>
+              </ul>
+              <ul class="details">
+                <li class="topic">Assigned Staff</li>
+                <li><a href="#" style="color:green;font-weight: bold">-</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">-</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">-</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">-</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">-</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">-</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">-</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">-</a></li>
+                <li><a href="#" style="color:green;font-weight: bold">-</a></li>
+              </ul>
+              <ul class="details">
+                <li class="topic">Reports</li>
+                <li><a href="#"><u>View</u></a></li>
+                <li><a href="#"><u>View</u></a></li>
+                <li><a href="#"><u>View</u></a></li>
+                <li><a href="#"><u>View</u></a></li>
+                <li><a href="#"><u>View</u></a></li>
+                <li><a href="#"><u>View</u></a></li>
+                <li><a href="#"><u>View</u></a></li>
+                <li><a href="#"><u>View</u></a></li>
+                <li><a href="#"><u>View</u></a></li>
+              </ul>
+            </div>
+            <div class="button">
+              <a href="#">See All</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+	    
+	    <div class="diagnosis dashboard">
+              <div class="overview-boxes">
+          <!--<div class="box">
+            <div class="right-side">
+              <div class="box-topic">chills</div>
+              <div class="number chills"></div>
+              <div class="indicator">
+                <span class="text"> Safe: false</span>
+              </div>
+            </div>
+            <i class="cart" style="font-size: 50px; font-style: initial; font-weight: bold;">❄</i>
+          </div>
+          <div class="box">
+            <div class="right-side">
+              <div class="box-topic">Diastole BP</div>
+              <div class="number dbp"></div>
+              <div class="indicator">
+                <span class="text">Safe [60 - 80 mm Hg]</span>
+              </div>
+            </div>
+            <i class="fas fa-heart cart two"></i>
+          </div>
+          <div class="box">
+            <div class="right-side">
+              <div class="box-topic">Systole BP</div>
+              <div class="number sbp"></div>
+              <div class="indicator">
+                <span class="text">Safe [90 - 120 mm Hg]</span>
+              </div>
+            </div>
+            <i class="fas fa-heart cart three"></i>
+          </div>-->
+          <div class="box">
+            <div class="right-side">
+              <div class="box-topic">HeartRate</div>
+              <div class="number heartrate">10</div>
+              <div class="indicator">
+                <span class="text">Safe [60 to 100 beats]</span>
+              </div>
+            </div>
+            <i class="fas fa-heartbeat cart four"></i>
+          </div>
+          <!--<div class="box">
+            <div class="right-side">
+              <div class="box-topic">Respiration Rate</div>
+              <div class="number respiration"></div>
+              <div class="indicator">
+                <span class="text">Safe [12 to 16 breaths/min]</span>
+              </div>
+            </div>
+            <i class="fas fa-lungs cart two"></i>
+          </div>-->
+          <div class="box">
+            <div class="right-side">
+              <div class="box-topic">SpO2</div>
+              <div class="number spo2">150</div>
+              <div class="indicator">
+                <span class="text">Range [95% or higher]</span>
+              </div>
+            </div>
+            <i class="fas fa-wind cart three"></i>
+          </div>
+          <div class="box">
+            <div class="right-side">
+              <div class="box-topic">Blood Group</div>
+              <div class="number bloodg">B+</div>
+              <div class="indicator">
+                <span class="text"></span>
+              </div>
+            </div>
+            <i class="fas fa-droplet cart four"></i>
+          </div>
+          <div class="box">
+            <div class="right-side">
+              <div class="box-topic">Temperature</div>
+              <div class="number temp">97</div>
+              <div class="indicator">
+                <span class="text">Range [97°F to 99°F]</span>
+              </div>
+            </div>
+            <i class="fa-solid fa-temperature-half cart "></i>
+          </div>
+          <!-- <div class="box">
+            <div class="right-side">
+             <div class="box-topic">Ambulation </div>
+              <div class="number ambulation"></div>
+              <div class="indicator">
+                <span class="text">Values possible : True/False</span>
+              </div>
+            </div>
+            <i class="fa-solid fa-face-thermometer"></i>
+            <i class="fas fa-syringe cart three"></i>
+          </div>
+          <div class="box">
+            <div class="right-side">
+              <div class="box-topic">Fever History </div>
+              <div class="number fever"></div>
+              <div class="indicator">
+                <span class="text">Values possible : Yes/No/Other</span>
+              </div>
+            </div>
+            <i class="fas fa-temperature-half cart four"></i>
+          </div>
+          <div class="box">
+            <div class="right-side">
+              <div class="box-topic">BMI</div>
+              <div class="number bmi"></div>
+              <div class="indicator">
+                <span class="text">Range [18.5 to 24.9]</span>
+              </div>
+            </div>
+            <i class="fas fa-balance-scale cart "></i>
+          </div>
+          <div class="box">
+            <div class="right-side">
+              <div class="box-topic">FiO2 </div>
+              <div class="number fio2"></div>
+              <div class="indicator">
+                <span class="text">Range [50 to 100]</span>
+              </div>
+            </div>
+            <i class="fas fa-lungs cart two"></i>
+          </div>
+        </div>-->
+          </div>
+        <div class="diagnosis-boxes">
+          <div class="graphout box">
+
+              <div id="ECG-data-info" class="graph-info">
+                <div id="sys-heart-info" class="graph-info"><span>Heart Beat</span><text class="dash-info-data sbp" style="font-size:85px;"></text></div>
+              </div><br>
+              <div class="ecg-heart">
+                <div id="ecg-graph" class="graph"></div>
+              </div>
+          </div>   
+           
+          <div class="graphout box">
+            <div class="spo2-graph">
+              <div id="spo2-graph" class="graph"></div>
+            </div>
+            <div id="spo2-info" class="graph-info"><span>SpO₂ Graph</span><text class="dash-info-data spo2"></text></div>
+          </div>
+	    </div>
+          </div>
+
+
+
+      
+      <!----------------------------------------------------------------------->
+
+
+
+
+
+      <div class="med-device dashboard">
+        <div class="device-boxes">
+          <div class="dev-nav box">
+            <div class="dev-search">
+                            <input type="text" onkeyup="node_search()" placeholder="Search for Category" class="s-inpt">
+                            <label for="lang"></label>
+                            <select required="" type="text" name="dev-filter" class="field-style field-split align-left" placeholder="Dev Filter" id="dev-filter" style="font-size: 15px;">
+                              <option value="" disabled="" selected="">Category</option>
+                              <option value="1">Health Device</option>
+                              <option value="2">Device ID</option>
+                              <option value="3">Value Attibutes</option>
+                              <option value="4">Status</option>
+                            </select>
+            </div>
+            <div class="s-btn">
+              <button class="s-btn-func" onclick="view_node_modal()">Add Device</button>
+              <button class="s-btn-func" onclick="view_key_modal()">Secret Key</button>
+            </div> 
+          </div>
+          <div class="dev-list box">
+        
+            <ul id="myUL">
+              <div class="limiter">
+                <div class="container-table100">
+                  <div class="wrap-table100">
+                    <div class="table100">
+                      <table id="dev-table">
+                        <thead>
+                            <tr class="table100-head">
+                              <th class="">Last Update</th>
+                              <th class="">Health Device</th>
+                              <th class="">Device ID</th>
+                              <th class="">Value Attributes</th>
+                              <th class="">Status</th>
+                              <th class="">Add/Reset</th>
+                              <th class="">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody id = "dev-table-body">
+                        
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  </div>
+                </div>
+                   
+            </ul>
+            
+          </div>
+          <!-- <div class="dev-list-sort">qwadadas</div> -->
+        </div>
+
+        <div class="no-device">No Device yet? Create a New Device now 🚀</div>
+
+      </div>
+
+
+      <!----------------------------------------------------------------------->
+
+
+      <div class="scheduler dashboard">
+        <div id="calendar" class="calendar-box"></div>
+      </div>
+
+
+      <!----------------------------------------------------------------------->
+
+      <div class="treatment dashboard">
+        <div class="treat-list box">
+        
+          <ul id="myUL">
+            <div class="limiter">
+              <div class="container-table100">
+                <div class="wrap-table100">
+                  <div class="table100">
+                    <table id="treat-table">
+                      <thead>
+                          <tr class="table100-head">
+                          <th class="">Date</th>
+                          <th class="">Doctor</th>
+                          <th class="">Category</th>
+                          <th class="">Medical Description</th>
+                          <th class="">Status</th>
+                          <th class="">Report</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="">2022-09-29</td>
+                          <td class="">Dr. Vignesh Kumar</td>
+                          <td class="">Orthopedic</td>
+                          <td class="">Arthroscopy, right knee, with partial medial meniscectomy and partial lateral meniscectomy</td>
+                          <td class="" >Updated</td>
+                          <td ><button class="treat-table-btn">Download</button></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                </div>
+              </div>
+                 
+          </ul>
+          
+        </div>
+      </div>
+
+      <!----------------------------------------------------------------------->
+
+      <div class="helpline dashboard">
+
+        <div class="number-boxes">
+          <div class="left num-list">
+            <div class="num box">
+              <h2>Emergency</h2>
+              <span><b>9 AM - 8PM </b> -> +910000000000</span>
+              <span><b>9 PM - 8AM </b> -> +910000000000</span>
+            </div>  
+            <div class="num box">
+              <h2>Check Appointments</h2>
+              <span><b>General</b> -> +910000000000</span>
+              <span><b>Urgent</b> -> +910000000000</span>
+            </div>
+            <div class="num box">
+              <h2>Nearest Hospital Reception</h2>
+              <span><b>ABC, XYZ</b> -> +910000000000</span>
+              <span><b>DEF, LMN</b> -> +910000000000</span>
+            </div>
+            <div class="num box">
+              <h2>FAQs on HealthConnect</h2>
+              <li><a href="#">Why HealthConnect?</a></li>
+              <li><a href="#">Which device works wth HealthConnect?</a></li>
+              <li><a href="#">How to connect device?</a></li>
+            </div>
+          </div>
+          <div class="right num-list">
+            <div class="num box" style="align-items: stretch;">
+              <h2>Make Appointment Today!</h2>
+              <form action="https://formbold.com/s/oYJb6" method="POST" class="form-style-9">
+                <ul>
+                <li>
+                  <input type="text" name="name" class="field-style field-split align-left" placeholder="Name">
+                  <input type="email" name="email" class="field-style field-split align-right" placeholder="Email">
+  
+                </li>
+                <li>
+                  <input type="text" name="phone" class="field-style field-split align-left" placeholder="Phone">
+                  <input type="location" name="location" class="field-style field-split align-right" placeholder="Pickup Location">
+                </li>
+                <li>
+                  <style>
+                    
+                      select:required:invalid {
+                        color: rgb(142, 142, 142);
+                      }
+                      input:required:invalid {
+                        color: rgb(142, 142, 142);
+                      }
+                      option[value=""][disabled] {
+                        display: none;
+                      }
+                      option {
+                        color: #000;
+                      }
+                    
+                  </style>
+                  <label for="lang"></label>
+                    <select required="" type="text" name="category" class="field-style field-split align-left" placeholder="Medical Category" id="lang" style="font-size: 13px;">
+                      <option value="" disabled="" selected="">Category</option>
+                      <option value="Orthopedics">Orthopedics</option>
+                      <option value="Internal Medicine">Internal Medicine</option>
+                      <option value="Gynecology">Gynecology</option>
+                      <option value="Dermatology">Dermatology</option>
+                      <option value="Pediatrics">Pediatrics</option>
+                      <option value="Radiology">Radiology</option>
+                      <option value="Family Medicine">Family Medicine</option>
+                      <option value="ENT">ENT</option>
+                      <option value="Anesthesia">Anesthesia</option>
+                    </select>
+                              
+                    <label for="meeting-time"></label>
+
+                    <input class="field-style field-split align-right" type="datetime-local" id="meeting-time" name="time" value="" min="" max="" required="">
+              </li>
+  
+                <li>
+                <input type="submit" value="Send Message">
+                </li>
+                </ul>
+                </form>
+            </div>  
+            <div class="num box">
+              <h2>Locate Nearby Hospitals</h2>
+              <div class="map">
+                
+                <iframe id="hospital-map" width="450" height="400" frameborder="0" style="border:0; height: 100%;" referrerpolicy="no-referrer-when-downgrade" src="" allowfullscreen="">
+            </iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+    </section>
+</div>
+
+    <script src="https://kit.fontawesome.com/1ed7106697.js" crossorigin="anonymous"></script>
+	    <script src="js/index.js"></script>
+      <script src="js/nav.js"></script>
+      <script src="js/sidebar.js"></script>
+      <script src="js/diagnosis.js"></script>
+      <script src="js/device.js"></script>
+      <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.ie11.min.js"></script>
+      <script src="js/calender.js"></script>
+      <script src="js/mqtt.js" type="text/javascript"></script>
+    <!--===============================================================================================-->
+	
+</body>
+
+</html>
+<!-- -->
