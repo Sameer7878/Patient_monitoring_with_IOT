@@ -10,7 +10,7 @@ from pathlib import Path
 from fastapi.templating import Jinja2Templates
 from uuid import uuid4
 import time
-#import Rasp_Sensor_Codes as rc
+import Rasp_Sensor_Codes as rc
 from multiprocessing import Process
 
 app = FastAPI()
@@ -39,13 +39,13 @@ def runInParallel(*fns):
   for p in proc:
     p.join()
 
-'''mx30 = rc.MAX30100()
+mx30 = rc.MAX30100()
 mx30.enable_spo2()
 #mx30.get_values()
 flame=rc.Fire_detect(18,24)
 acc=rc.Accelerometer()
 #acc.detect()
-oxy_pres=rc.Oxygen_Pressure(0x48)'''
+oxy_pres=rc.Oxygen_Pressure(0x48)
 
 html = """
 <!DOCTYPE html>
@@ -137,10 +137,23 @@ async def websocket_endpoint(websocket: WebSocket,token):
     try:
         while True:
             data={
+                1:{"id":1,
+                   "name":"sample",
+                   "age":20,
+                   "gender":"Male",
+                   "Assigned":None,
+                   "data":{
+                       "pulse_oxi":mx30.get_values(),
+                       "flame_check":flame.detect(),
+                       "motion_check":acc.detect(),
+                       "oxy_pres":oxy_pres.get_values()
+                   }
+                }
 
             }
-    except:
-        pass
+            await manager.boardcast_to_all(data)
+    except WebSocketDisconnect:
+        manager.disconnect(websocket, token)
     '''while websocket:
         await websocket.send_json(mx30.get_values())
         await websocket.send_json(flame.detect())

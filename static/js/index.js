@@ -4,17 +4,23 @@
 
     var user = sessionStorage.getItem('user');
     var token = sessionStorage.getItem('token');
-    
-    $(".log_out").click(function(){
-      sessionStorage.removeItem('token');
-      location.href = "/login/"
+
+    $(".log_out").click(function () {
+        sessionStorage.removeItem('token');
+        location.href = "/login/"
     });
 
-    
 
-if (token !=""){
-    const protocol = window.location.protocol.includes('https') ? 'wss': 'ws';
+    if (token == "") {
+        location.href = "/login/"
+    }
+    const protocol = window.location.protocol.includes('https') ? 'wss' : 'ws';
     const ws = new WebSocket(`${protocol}://${location.host}/EstablishConn/${token}`);
+    ws.onmessage = function (event) {
+        //var douquot=event.data.replace(/'/g, '"');
+        var patient_data = JSON.parse(event.data);
+        console.log(patient_data);
+    }
       /*$.ajax({
         type: "GET",
         url: "https://healthconnect-server.onrender.com/geo_locate/"+user,
@@ -42,7 +48,7 @@ if (token !=""){
       var map_link = "https://maps.google.com/maps?q=hospitals%20in%20"+sessionStorage.getItem('geo_loc')+"&t=&z=10&ie=UTF8&iwloc=&output=embed";
       $('#hospital-map').attr('src', map_link);*/
 
-    }
+
 
     
 

@@ -8,7 +8,3 @@ finally:
     GPIO.cleanup()  # always do a GPIO cleanup in your scripts!
 
 print("\n".join(measures))'''
-def demo():
-    return {1:2}
-
-a=
