@@ -6,14 +6,16 @@
     var token = sessionStorage.getItem('token');
     
     $(".log_out").click(function(){
-      sessionStorage.removeItem('uid');
-      location.href = "../../login/"
+      sessionStorage.removeItem('token');
+      location.href = "/login/"
     });
 
     
 
-if (user !=""){
-      $.ajax({
+if (token !=""){
+    const protocol = window.location.protocol.includes('https') ? 'wss': 'ws';
+    const ws = new WebSocket(`${protocol}://${location.host}/EstablishConn/${token}`);
+      /*$.ajax({
         type: "GET",
         url: "https://healthconnect-server.onrender.com/geo_locate/"+user,
         dataType: "json",
@@ -26,7 +28,7 @@ if (user !=""){
           dataType: "json",
           encode: true,
         }).done(function (data) {
-          //console.log(data.city);
+          console.log(data.city);
           sessionStorage.setItem('geo_loc',data.city);
           
         }).fail(function (data) {
@@ -38,9 +40,10 @@ if (user !=""){
       });
 
       var map_link = "https://maps.google.com/maps?q=hospitals%20in%20"+sessionStorage.getItem('geo_loc')+"&t=&z=10&ie=UTF8&iwloc=&output=embed";
-      $('#hospital-map').attr('src', map_link);
+      $('#hospital-map').attr('src', map_link);*/
 
     }
+
     
 
     

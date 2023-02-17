@@ -11,10 +11,11 @@ let formData = {
 
 (function ($) {
     "use strict";
+    console.log('hhh')
     
     $.ajax({
         type: "GET",
-        url: "https://healthconnect-server.onrender.com/devtkn/portal",
+        url: "",
         data : formData,
         crossDomain: true,
         dataType: "json",

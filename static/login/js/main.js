@@ -1,5 +1,5 @@
 
-
+console.log('start');
 function setCookie(uid,value,exp_days) {
     let d = new Date();
     d.setTime(d.getTime() + (exp_days*24*60*60*1000));
@@ -10,8 +10,6 @@ function setCookie(uid,value,exp_days) {
 
 (function ($) {
     "use strict";
-
-
     /*==================================================================
     [ Focus input ]*/
     $('.input100').each(function(){
@@ -24,8 +22,7 @@ function setCookie(uid,value,exp_days) {
             }
         })    
     })
-  
-   
+
     /*=============== [ Validate ]  ===============*/
     let input = $('.validate-input .input100');
 
@@ -41,26 +38,45 @@ function setCookie(uid,value,exp_days) {
                 check=false;
             }
         }
-
+        console.log(check)
         let formData = {
-            user: $("#User").val(),
-            pass: $("#pass").val(),
+            username: $("#User").val(),
+            password: $("#pass").val(),
           };
-
+        console.log(formData);
         $.ajax({
-            type: "GET",
-            url: "https://healthconnect-server.onrender.com/login",
-            crossDomain: true,
-            data: formData,
-            dataType: "json",
-            encode: true,
-          }).done(function (data) {
+                  type: "POST",
+                  url: "/VerifyLogin/",
+                  data : JSON.stringify(formData),
+                  crossDomain: true,
+                  dataType: "json",
+                  encode: true,
+                  headers: {
+                    "Content-Type": "application/json"
+                  },
+                  processData: false,
+                }).done(function (data)  {
+                    console.log(data)
+                    if(data.status){
+                        sessionStorage.setItem('user',$("#User").val());
+                        sessionStorage.setItem('token',data.token);
+                         var user = sessionStorage.getItem('user');
+                        var token = sessionStorage.getItem('token');
+                        let formData = {
+                                user: user,
+                                token: token,
+                              };
+                        console.log(formData)
+                       location.href = "/";
+                    }else
+                        for(let i=0; i<input.length; i++) {
+                            showValidate(input[i]);
+                            check = false;
+                        }
             //console.log(data.patient[0]._id);
-            sessionStorage.setItem('user',$("#User").val());
-            sessionStorage.setItem('token',data.token);
             //setCookie("uid", data.patient[0]._id, 1);
-            location.href = "../dashboard/patient/"
           }).fail(function (data) {
+              console.log(data)
             for(let i=0; i<input.length; i++) {
                 showValidate(input[i]);
                 check=false;
