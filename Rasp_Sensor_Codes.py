@@ -29,6 +29,8 @@ import busio
 import Adafruit_ADS1x15
 import time
 from multiprocessing import Queue
+import math
+
 
 INT_STATUS   = 0x00  # Which interrupts are tripped
 INT_ENABLE   = 0x01  # Which interrupts are active
@@ -109,6 +111,7 @@ class MAX30100(object):
 
     def __init__(self,
                  i2c=None,
+                 id=1,
                  mode=MODE_HR,
                  sample_rate=100,
                  led_current_red=11.0,
@@ -119,7 +122,7 @@ class MAX30100(object):
 
         # Default to the standard I2C bus on Pi.
         self.i2c = i2c if i2c else smbus.SMBus(1)
-
+        self.id=id
         self.set_mode(MODE_HR)  # Trigger an initial temperature read.
         self.set_led_current(led_current_red, led_current_ir)
         self.set_spo_config(sample_rate, pulse_width)
@@ -224,7 +227,7 @@ class MAX30100(object):
         self.spo2=int(self.red/100)
         #await websocket.send_json({"module_name":"max30100","pulse":self.hb,"spo2":self.spo2, "state":"Running"})
         #print(1)
-        return {"module_name":"max30100","pulse":self.hb,"spo2":self.spo2, "status":"Running","state":True}
+        return {"module_name":"max30100","pulse":self.hb,"spo2":self.spo2, "status":"Running","state":True,"id":self.id}
         
 
 
@@ -233,25 +236,27 @@ class Accelerometer:
     """
     This class for Accelerometer to detect motion of Patient
     """
-    def __init__(self):
+    def __init__(self,id=1):
         self.i2c=busio.I2C(board.SCL,board.SDA)
         self.acc = adafruit_adxl34x.ADXL345(self.i2c)
+        self.id=id
         
     def detect(self):
         x, y, z = self.acc.acceleration
         if x>=1.00 or y>=1.00:
             #await websocket.send_json({"module_name":"Accelerometer","X":x,"Y":y,"Z":z,"status":"True" ,"state":"Motion Detected"})
-            return {"module_name":"Accelerometer","X":x,"Y":y,"Z":z,"state":True, "status":"Motion Detected"}
-        return {"status":False}
+            return {"module_name":"Accelerometer","X":x,"Y":y,"Z":z,"state":True, "status":"Motion Detected","id":self.id}
+        return {"status":False,"id":self.id,"state":True}
 
 #Class for Flame_Sensor
             
 class Fire_detect:
     
-    def __init__(self,Flame_Pin,Buzzer_pin):
+    def __init__(self,Flame_Pin,Buzzer_pin,id=1):
         
         self.FLAME_PIN=Flame_Pin
         self.BUZZ_PIN=Buzzer_pin
+        self.id=id
         GPIO.setup(self.FLAME_PIN, GPIO.IN)
         GPIO.setup(self.BUZZ_PIN, GPIO.OUT)
     def detect(self):
@@ -263,17 +268,18 @@ class Fire_detect:
             GPIO.output(self.BUZZ_PIN,GPIO.HIGH)
             #await websocket.send_json({"module_name":"flame_detector","status":"True" ,"state":"Fire Detected","Buzzer":"activated for 2 seconds"})
             #print(3)
-            return {"module_name":"flame_detector","state":True ,"status":"Fire Detected","Buzzer":"activated for 2 seconds"}
+            return {"module_name":"flame_detector","state":True ,"status":"Fire Detected","Buzzer":"activated for 2 seconds","id":self.id}
         else:
             GPIO.output(self.BUZZ_PIN,GPIO.LOW)
-            return {"status":False}
+            return {"status":False,"id":self.id,"state":True}
             # Wait for a short time before checking again
 #Class for measure the oxygen levels in cylinder
 class Oxygen_Pressure:
-    def __init__(self,addr):    
+    def __init__(self,addr,id=1):    
         self.addr=addr
         self.adc = Adafruit_ADS1x15.ADS1115(address=self.addr, busnum=1)
         self.GAIN = 2/3
+        self.id=id
     
     def get_values(self):
         value = [0]
@@ -282,10 +288,11 @@ class Oxygen_Pressure:
         psi = 50.0 * volts-25.0
         bar = psi * 0.0689475729
         percentage=(psi/2000)*100
+        percentage=round(percentage,2)
         if bar>0.1:
             state="active"
         else:
             state="Idle"
         #await websocket.send_json({"module_name":"oxygen_pressure","volts":volts,"psi":psi,"bar":bar, "state":state})
-        return {"module_name":"oxygen_pressure","volts":volts,"psi":psi,"bar":bar, "status":state,"percentage":percentage,"state":True}
+        return {"module_name":"oxygen_pressure","volts":volts,"psi":psi,"bar":bar, "status":state,"percentage":percentage,"state":True,"id":self.id}
           
