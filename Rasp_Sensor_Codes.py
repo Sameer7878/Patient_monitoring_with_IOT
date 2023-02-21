@@ -224,7 +224,7 @@ class MAX30100(object):
         self.spo2=int(self.red/100)
         #await websocket.send_json({"module_name":"max30100","pulse":self.hb,"spo2":self.spo2, "state":"Running"})
         #print(1)
-        return {"module_name":"max30100","pulse":self.hb,"spo2":self.spo2, "state":"Running"}
+        return {"module_name":"max30100","pulse":self.hb,"spo2":self.spo2, "status":"Running","state":True}
         
 
 
@@ -241,7 +241,7 @@ class Accelerometer:
         x, y, z = self.acc.acceleration
         if x>=1.00 or y>=1.00:
             #await websocket.send_json({"module_name":"Accelerometer","X":x,"Y":y,"Z":z,"status":"True" ,"state":"Motion Detected"})
-            return {"module_name":"Accelerometer","X":x,"Y":y,"Z":z,"status":"True", "state":"Motion Detected"}
+            return {"module_name":"Accelerometer","X":x,"Y":y,"Z":z,"state":True, "status":"Motion Detected"}
         return {"status":False}
 
 #Class for Flame_Sensor
@@ -263,8 +263,7 @@ class Fire_detect:
             GPIO.output(self.BUZZ_PIN,GPIO.HIGH)
             #await websocket.send_json({"module_name":"flame_detector","status":"True" ,"state":"Fire Detected","Buzzer":"activated for 2 seconds"})
             #print(3)
-            return {"module_name":"flame_detector","status":"True" ,"state":"Fire Detected","Buzzer":"activated for 2 seconds"}
-            time.sleep(2)
+            return {"module_name":"flame_detector","state":True ,"status":"Fire Detected","Buzzer":"activated for 2 seconds"}
         else:
             GPIO.output(self.BUZZ_PIN,GPIO.LOW)
             return {"status":False}
@@ -282,10 +281,11 @@ class Oxygen_Pressure:
         volts = value[0] / 32767.0 * 6.144
         psi = 50.0 * volts-25.0
         bar = psi * 0.0689475729
+        percentage=(psi/2000)*100
         if bar>0.1:
             state="active"
         else:
             state="Idle"
         #await websocket.send_json({"module_name":"oxygen_pressure","volts":volts,"psi":psi,"bar":bar, "state":state})
-        return {"module_name":"oxygen_pressure","volts":volts,"psi":psi,"bar":bar, "state":state}
+        return {"module_name":"oxygen_pressure","volts":volts,"psi":psi,"bar":bar, "status":state,"percentage":percentage,"state":True}
           

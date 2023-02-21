@@ -33,12 +33,11 @@ var ECG_VAL =[0.5, -0.25, 2.5, -2, 0.5, 1, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 var RESP =[0.3, 0.3, 0.8, 1.3, 1.3, 1.3, 1.5, 1.5, 2, 2, 1.5, 1.5, 0.5, 0, 0, 0.3, 0.8, 1, 1.3, 1.3, 1.5, 1.5, 2, 2, 1.5, 1.5, 0.5, 0.5]
 
 var cnt = 0;
-var data = false
+var data = true
 var j=0
 var k=0
 
 var interval = setInterval(function() {
-  
   if(data){
     var y1 = ECG_VAL[j]*10
     var y3 = Math.round(Math.random()*10) + 1
@@ -66,11 +65,7 @@ var interval = setInterval(function() {
   var data_update3 = {
     y: [newArray3]
   };
-  var data_update4 = {
-    y: [newArray4]
-  };
-
-  
+  console.log(data_update1)
   Plotly.update('ecg-graph', data_update1)
   Plotly.update('spo2-graph', data_update3)
   
