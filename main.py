@@ -46,6 +46,8 @@ flame=rc.Fire_detect(18,24)
 acc=rc.Accelerometer()
 #acc.detect()
 oxy_pres=rc.Oxygen_Pressure(0x48)
+saline_wg=rc.HX711()
+
 
 html = """
 <!DOCTYPE html>
@@ -82,18 +84,23 @@ html = """
 """
 
 def get_data_from_sensors(id):
-    data = {
-        1: {"data": {
-            "patient_id":1,
-            "pulse_oxi":mx30.get_values() ,
-            "flame_check": flame.detect(),
-            "motion_check": acc.detect(),
-            "oxy_pres": oxy_pres.get_values(),
-            "saline_per": {"percentage": 90}
-        }
-        }
+    try:
+        data = {
+            1: {"data": {
+                "patient_id":1,
+                "pulse_oxi":mx30.get_values() ,
+                "flame_check": flame.detect(),
+                "motion_check": acc.detect(),
+                "oxy_pres": oxy_pres.get_values(),
+                "saline_per": saline_wg.get_values()
+            }
+            }
 
-    }
+        }
+    except Exception as e:
+        print(e)
+        
+            
     return data[id]
 token_with_websocket={}
 class ConnectionManager:
@@ -126,7 +133,10 @@ async def login(request:Request):
 def CheckSensor(sensor_id):
     sensor_list={1:{"state":True,"id":1},2:{"state":True,"id":2},3:{"state":True,"id":3},4:{"state":True,"id":4}}
     return sensor_list[int(sensor_id)]
-
+@app.get("/SetInitialWG/{token}")
+async def SetInitialWG(token):
+    if token in active_tokens:
+        return saline_wg.set_initial_weight()
 @app.get("/GetHospitalData/{token}/")
 async def GetHospitalData(token):
     print(token)

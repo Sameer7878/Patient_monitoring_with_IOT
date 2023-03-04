@@ -268,3 +268,22 @@ Plotly.plot('spo2-graph', [{
   }
 }]);
 
+function InitializeWG(id){
+    var ele=document.getElementById(id);
+    $.ajax({
+        type: "GET",
+        url: "/SetInitialWG/"+token+"/",
+        crossDomain: true,
+        dataType: "json",
+        encode: true,
+      }).done(function (data) {
+            if(data.status){
+                console.log('dstat')
+                ele.innerText='stop';
+                ele.id='in2';
+                console.log(ele.id)
+            }
+        });
+    }
+    
+
